@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import Head from 'next/head';
-import SubscriptionForm from '@/components/SubscriptionForm';
+import SubscriptionForm, { SubscriptionFormSubmitData } from '@/components/SubscriptionForm';
 import dynamic from 'next/dynamic';
 
 // 动态导入二维码组件，避免服务端渲染问题
@@ -13,24 +13,25 @@ export default function Home() {
   const [subscriptionLink, setSubscriptionLink] = useState('');
   const [showQrCode, setShowQrCode] = useState(false);
 
-  const handleGenerateLink = (data: {
-    host: string;
-    uuid: string;
-    path: string;
-    sni: string;
-    type: 'ws' | 'tcp' | 'http';
-    format: 'vless' | 'vmess';
-  }) => {
-    const { host, uuid, path, sni, type, format } = data;
+  const handleGenerateLink = (data: SubscriptionFormSubmitData) => {
     const baseUrl = window.location.origin;
-    const queryParams = new URLSearchParams({
-      host,
-      uuid,
-      path: path || '/?ed=2560',
-      ...(sni && { sni }),
-      type,
-      format
-    });
+    const queryParams = new URLSearchParams();
+
+    if (data.mode === 'template') {
+      queryParams.set('mode', 'template');
+      queryParams.set('templateLink', data.templateLink.trim());
+    } else {
+      const { host, uuid, path, sni, type, format } = data;
+      queryParams.set('mode', 'standard');
+      queryParams.set('host', host);
+      queryParams.set('uuid', uuid);
+      queryParams.set('path', path || '/?ed=2560');
+      if (sni) {
+        queryParams.set('sni', sni);
+      }
+      queryParams.set('type', type);
+      queryParams.set('format', format);
+    }
     
     const link = `${baseUrl}/api/subscribe?${queryParams.toString()}`;
     setSubscriptionLink(link);

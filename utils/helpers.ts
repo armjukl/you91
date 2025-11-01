@@ -29,12 +29,16 @@ export const processContent = (content: string): ProcessedContent => {
   const addresses: AddressItem[] = [];
   
   for (const item of addressArray) {
-    const match = item.match(/^(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}|\[.*\]):?(\d+)?#?(.*)?$/);
+    const trimmed = item.trim();
+    if (!trimmed) continue;
+
+    const match = trimmed.match(/^(\[[^\]]+\]|(?:\d{1,3}\.){3}\d{1,3}|[\w.-]+)(?::(\d+))?(?:#(.*))?$/);
     if (match) {
+      const remark = match[3]?.trim();
       addresses.push({
         ip: match[1],
         port: match[2] || '443',
-        remark: match[3] || undefined
+        remark: remark ? remark : undefined
       });
     }
   }
