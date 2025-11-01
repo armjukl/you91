@@ -18,16 +18,18 @@ export default function Home() {
     uuid: string;
     path: string;
     sni: string;
-    type: string;
+    type: 'ws' | 'tcp' | 'http';
+    format: 'vless' | 'vmess';
   }) => {
-    const { host, uuid, path, sni, type } = data;
+    const { host, uuid, path, sni, type, format } = data;
     const baseUrl = window.location.origin;
     const queryParams = new URLSearchParams({
       host,
       uuid,
       path: path || '/?ed=2560',
       ...(sni && { sni }),
-      type: type || 'ws'
+      type,
+      format
     });
     
     const link = `${baseUrl}/api/subscribe?${queryParams.toString()}`;

@@ -112,7 +112,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       path = '/?ed=2560',
       sni,
       type = 'ws',
-      format,
+      format = 'vless',
       mode,
       extra
     } = req.query as unknown as SubscribeRequest;
@@ -122,10 +122,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     if (!host || !uuid) {
       return res.status(400).json({ error: 'Missing required parameters: host and uuid' });
     }
- 
+
+    const sanitizedHost = host.trim();
+    const sanitizedUuid = uuid.trim();
+
+    if (!sanitizedHost || !sanitizedUuid) {
+      return res.status(400).json({ error: 'Invalid host or uuid' });
+    }
+
+    const requestedPath = (path && path.trim()) || '/?ed=2560';
+    const requestedSni = (sni && sni.trim()) || sanitizedHost;
+
+    let transport = (type || 'ws').toLowerCase();
+    const supportedTransports = ['ws', 'tcp', 'http'];
+    if (!supportedTransports.includes(transport)) {
+      transport = 'ws';
+    }
+
+    const subscriptionFormat = (format || 'vless').toLowerCase();
+    const supportedFormats = ['vless', 'vmess'];
+    if (!supportedFormats.includes(subscriptionFormat)) {
+      return res.status(400).json({ error: `Unsupported format: ${format}` });
+    }
+
     // 获取当前域名
     const currentDomain = getCurrentDomain(req);
     console.log('Current domain:', currentDomain);
+    console.log('Effective parameters:', { transport, subscriptionFormat, requestedPath, requestedSni });
     
     // 构建动态地址 API 列表
     const dynamicAddressesApi = [
@@ -164,22 +187,75 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const processed = processContent(addressesContent);
     console.log('Processed addresses count:', processed.addresses.length);
 
-    // 构建订阅内容 - 使用 VLESS 协议
-    let subscriptionContent = '';
-    for (const addr of processed.addresses) {
-      const port = addr.port || '443';
-      const remark = addr.remark || '';
-      
-      // 生成 VLESS 链接
-      const vlessLink = `vless://${uuid}@${addr.ip}:${port}?encryption=none&security=tls&sni=${sni || host}&alpn=${proxyConfig.alpn}&fp=random&type=${type}&host=${host}&path=${encodeURIComponent(path)}&allowInsecure=1#${encodeURIComponent(remark)}`;
-      
-      subscriptionContent += vlessLink + '\n';
-    }
+    const subscriptionLines: string[] = [];
 
-    console.log('Generated subscription content length:', subscriptionContent.length);
+    processed.addresses.forEach((addr, index) => {
+      const port = addr.port || '443';
+      const remark = addr.remark?.trim() || `${sanitizedHost}-${index + 1}`;
+
+      if (subscriptionFormat === 'vmess') {
+        const vmessConfig: Record<string, string> = {
+          v: '2',
+          ps: remark,
+          add: addr.ip,
+          port,
+          id: sanitizedUuid,
+          aid: '0',
+          scy: 'auto',
+          net: transport,
+          type: 'none',
+          tls: 'tls'
+        };
+
+        if (transport === 'ws' || transport === 'http') {
+          vmessConfig.host = sanitizedHost;
+          vmessConfig.path = requestedPath;
+        }
+
+        if (requestedSni) {
+          vmessConfig.sni = requestedSni;
+        }
+
+        if (proxyConfig.alpn) {
+          vmessConfig.alpn = proxyConfig.alpn;
+        }
+
+        vmessConfig.fp = 'random';
+
+        const vmessPayload = Buffer.from(JSON.stringify(vmessConfig), 'utf-8').toString('base64');
+        subscriptionLines.push(`vmess://${vmessPayload}`);
+      } else {
+        const params = new URLSearchParams({
+          encryption: 'none',
+          security: 'tls',
+          fp: 'random',
+          type: transport,
+          allowInsecure: '1'
+        });
+
+        if (requestedSni) {
+          params.set('sni', requestedSni);
+        }
+
+        if (proxyConfig.alpn) {
+          params.set('alpn', proxyConfig.alpn);
+        }
+
+        params.set('host', sanitizedHost);
+        params.set('path', requestedPath);
+
+        const vlessLink = `vless://${sanitizedUuid}@${addr.ip}:${port}?${params.toString()}#${encodeURIComponent(remark)}`;
+        subscriptionLines.push(vlessLink);
+      }
+    });
+
+    const subscriptionContent = subscriptionLines.join('\n');
+    const normalizedContent = subscriptionLines.length ? `${subscriptionContent}\n` : '';
+
+    console.log('Generated subscription content length:', normalizedContent.length);
 
     // 始终返回 Base64 编码的内容
-    const base64Content = encodeBase64(subscriptionContent);
+    const base64Content = encodeBase64(normalizedContent);
     res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     
     // 直接返回内容，不设置下载头
