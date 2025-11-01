@@ -32,15 +32,59 @@ export const processContent = (content: string): ProcessedContent => {
     const trimmed = item.trim();
     if (!trimmed) continue;
 
-    const match = trimmed.match(/^(\[[^\]]+\]|(?:\d{1,3}\.){3}\d{1,3}|[\w.-]+)(?::(\d+))?(?:#(.*))?$/);
-    if (match) {
-      const remark = match[3]?.trim();
-      addresses.push({
-        ip: match[1],
-        port: match[2] || '443',
-        remark: remark ? remark : undefined
-      });
+    const [addressPartRaw, ...remarkParts] = trimmed.split('#');
+    const remark = remarkParts.length ? remarkParts.join('#').trim() : undefined;
+    const addressPart = addressPartRaw.trim();
+    if (!addressPart) continue;
+
+    let host = '';
+    let port = '443';
+
+    if (addressPart.startsWith('[')) {
+      const closingIndex = addressPart.indexOf(']');
+      if (closingIndex === -1) {
+        continue;
+      }
+
+      host = addressPart.slice(1, closingIndex).trim();
+      const remainder = addressPart.slice(closingIndex + 1).trim();
+      if (remainder.startsWith(':')) {
+        const candidatePort = remainder.slice(1).trim();
+        if (/^\d+$/.test(candidatePort)) {
+          port = candidatePort;
+        }
+      }
+    } else {
+      const colonMatches = addressPart.match(/:/g);
+      const colonCount = colonMatches ? colonMatches.length : 0;
+
+      if (colonCount === 1) {
+        const lastColonIndex = addressPart.lastIndexOf(':');
+        const candidatePort = addressPart.slice(lastColonIndex + 1).trim();
+        if (/^\d+$/.test(candidatePort)) {
+          port = candidatePort;
+          host = addressPart.slice(0, lastColonIndex).trim();
+        } else {
+          host = addressPart.trim();
+        }
+      } else {
+        host = addressPart.trim();
+      }
     }
+
+    if (!host) {
+      continue;
+    }
+
+    const normalizedHost = host.replace(/^\[|\]$/g, '');
+    const normalizedPort = port && port.trim() ? port.trim() : '443';
+    const normalizedRemark = remark && remark.length ? remark : undefined;
+
+    addresses.push({
+      ip: normalizedHost,
+      port: normalizedPort,
+      remark: normalizedRemark
+    });
   }
   
   return { addresses, content: cleaned };
