@@ -95,6 +95,36 @@ function formatHostForLink(host: string): string {
   return trimmed.includes(':') ? `[${trimmed}]` : trimmed;
 }
 
+function decodeRemarkValue(value: string | undefined): string | undefined {
+  if (!value) {
+    return undefined;
+  }
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+}
+
+function buildSuffixWithRemark(originalSuffix: string, remarkFromAddress: string | undefined): string {
+  const hashIndex = originalSuffix.indexOf('#');
+  const base = hashIndex === -1 ? originalSuffix : originalSuffix.slice(0, hashIndex);
+  const existingRemark = hashIndex === -1 ? undefined : originalSuffix.slice(hashIndex + 1);
+
+  const normalizedRemark =
+    remarkFromAddress && remarkFromAddress.trim()
+      ? remarkFromAddress.trim()
+      : existingRemark && existingRemark.trim()
+        ? decodeRemarkValue(existingRemark.trim())
+        : undefined;
+
+  if (!normalizedRemark) {
+    return base;
+  }
+
+  return `${base}#${encodeURIComponent(normalizedRemark)}`;
+}
+
 function padBase64(input: string): string {
   const normalized = input.replace(/-/g, '+').replace(/_/g, '/').replace(/\s+/g, '');
   const padding = normalized.length % 4;
@@ -169,7 +199,8 @@ function generateVlessFromTemplate(templateLink: string, addresses: AddressItem[
   return addresses.map(addr => {
     const hostForLink = formatHostForLink(addr.ip);
     const port = (addr.port && addr.port.trim()) || defaultPort;
-    return `${scheme}${userInfo}@${hostForLink}:${port}${suffix}`;
+    const finalSuffix = buildSuffixWithRemark(suffix, addr.remark);
+    return `${scheme}${userInfo}@${hostForLink}:${port}${finalSuffix}`;
   });
 }
 
@@ -192,25 +223,42 @@ function generateVmessFromTemplate(templateLink: string, addresses: AddressItem[
     throw new Error('Invalid VMess template link: malformed payload');
   }
 
-  const originalPortValue = (baseConfig as Record<string, unknown>).port;
+  const baseConfigRecord = baseConfig as Record<string, unknown>;
+  const originalPortValue = baseConfigRecord.port;
   const originalPort = typeof originalPortValue === 'number'
     ? String(originalPortValue)
     : typeof originalPortValue === 'string' && originalPortValue.trim()
       ? originalPortValue.trim()
       : '443';
+  const originalRemarkValue =
+    typeof baseConfigRecord.ps === 'string'
+      ? baseConfigRecord.ps
+      : undefined;
 
   return addresses.map(addr => {
-    const config = { ...(baseConfig as Record<string, unknown>) };
+    const config: Record<string, unknown> = { ...baseConfigRecord };
     const portToUse = (addr.port && addr.port.trim()) || originalPort;
     const host = addr.ip.trim();
 
-    (config as Record<string, unknown>).add = host;
+    config.add = host;
 
     if (typeof originalPortValue === 'number') {
       const numericPort = Number(portToUse);
-      (config as Record<string, unknown>).port = Number.isNaN(numericPort) ? originalPortValue : numericPort;
+      config.port = Number.isNaN(numericPort) ? originalPortValue : numericPort;
     } else {
-      (config as Record<string, unknown>).port = portToUse;
+      config.port = portToUse;
+    }
+
+    const remarkFromAddress = addr.remark?.trim();
+    const remarkToApply =
+      remarkFromAddress && remarkFromAddress.length
+        ? remarkFromAddress
+        : originalRemarkValue;
+
+    if (remarkToApply !== undefined) {
+      config.ps = remarkToApply;
+    } else if ('ps' in config) {
+      config.ps = undefined;
     }
 
     const encoded = Buffer.from(JSON.stringify(config), 'utf-8').toString('base64');
