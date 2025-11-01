@@ -6,22 +6,38 @@ interface SubscriptionFormProps {
     uuid: string;
     path: string;
     sni: string;
-    type: string;
+    type: 'ws' | 'tcp' | 'http';
+    format: 'vless' | 'vmess';
   }) => void;
 }
 
+type SubscriptionFormValues = Parameters<SubscriptionFormProps['onSubmit']>[0];
+
 export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<SubscriptionFormValues>({
     host: '',
     uuid: '',
     path: '/?ed=2560',
     sni: '',
-    type: 'ws'
+    type: 'ws',
+    format: 'vless'
   });
-  
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    const key = name as keyof SubscriptionFormValues;
+
+    setFormData(prev => {
+      if (key === 'format') {
+        return { ...prev, format: value as SubscriptionFormValues['format'] };
+      }
+
+      if (key === 'type') {
+        return { ...prev, type: value as SubscriptionFormValues['type'] };
+      }
+
+      return { ...prev, [key]: value } as SubscriptionFormValues;
+    });
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -78,6 +94,19 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
           onChange={handleChange}
           placeholder="可选，默认与主机相同"
         />
+      </div>
+
+      <div className="form-group">
+        <label htmlFor="format">订阅协议</label>
+        <select
+          id="format"
+          name="format"
+          value={formData.format}
+          onChange={handleChange}
+        >
+          <option value="vless">VLESS</option>
+          <option value="vmess">VMess</option>
+        </select>
       </div>
 
       <div className="form-group">

@@ -3,8 +3,8 @@ export interface SubscribeRequest {
   uuid: string;
   path?: string;
   sni?: string;
-  type?: string;
-  format?: string;
+  type?: 'ws' | 'tcp' | 'http';
+  format?: 'vless' | 'vmess';
   mode?: string;
   extra?: string;
 }
