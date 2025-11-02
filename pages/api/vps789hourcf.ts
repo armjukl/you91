@@ -26,6 +26,17 @@ interface ExternalApiResponse {
   };
 }
 
+function formatEndpointHost(host: string): string {
+  const trimmed = host.trim();
+  if (!trimmed) {
+    return trimmed;
+  }
+  if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+    return trimmed;
+  }
+  return trimmed.includes(':') ? `[${trimmed}]` : trimmed;
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -57,8 +68,12 @@ export default async function handler(
           for (const item of ipList) {
             // 确保ip和avgScore存在且类型正确
             if (item.ip && typeof item.avgScore === 'number') {
+              const formattedHost = formatEndpointHost(item.ip);
+              if (!formattedHost) {
+                continue;
+              }
               // 格式：[ip]:[port]#[CT/CU/CM]-[avgScore]
-              transformedLines.push(`${item.ip}:${defaultPort}#${category}-${item.avgScore}`);
+              transformedLines.push(`${formattedHost}:${defaultPort}#${category}-${item.avgScore}`);
             }
           }
         }
