@@ -40,7 +40,7 @@ const initialStandardForm: StandardFormState = {
 };
 
 export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
-  const [mode, setMode] = useState<SubscriptionMode>('standard');
+  const [mode, setMode] = useState<SubscriptionMode>('template');
   const [standardForm, setStandardForm] = useState<StandardFormState>(initialStandardForm);
   const [templateLink, setTemplateLink] = useState('');
 
@@ -214,85 +214,127 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
       <style jsx>{`
         .subscription-form {
           background: white;
-          padding: 2rem;
-          border-radius: 8px;
-          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+          padding: 2.5rem;
+          border-radius: 16px;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.18);
         }
         
         .form-group {
-          margin-bottom: 1.5rem;
+          margin-bottom: 1.75rem;
         }
         
         label {
           display: block;
-          margin-bottom: 0.5rem;
-          font-weight: 500;
-          color: #333;
+          margin-bottom: 0.625rem;
+          font-weight: 600;
+          color: #2c3e50;
+          font-size: 0.95rem;
+          letter-spacing: 0.3px;
         }
         
         .mode-options {
           display: flex;
           gap: 1rem;
+          padding: 0.5rem;
+          background: #f8f9fa;
+          border-radius: 12px;
         }
         
         .mode-options label {
           display: flex;
           align-items: center;
-          gap: 0.4rem;
-          padding: 0.25rem 0.75rem;
-          border-radius: 999px;
-          border: 1px solid transparent;
+          justify-content: center;
+          gap: 0.5rem;
+          padding: 0.625rem 1.25rem;
+          border-radius: 8px;
+          border: 2px solid transparent;
           cursor: pointer;
-          transition: color 0.2s, border-color 0.2s, background-color 0.2s;
-          color: #555;
+          transition: all 0.3s ease;
+          color: #6c757d;
+          font-weight: 500;
+          flex: 1;
+          background: white;
+        }
+        
+        .mode-options label:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
         .mode-options label.active {
-          color: #0070f3;
-          border-color: rgba(0, 112, 243, 0.3);
-          background-color: rgba(0, 112, 243, 0.08);
+          color: white;
+          border-color: #667eea;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
         }
         
         .mode-options input {
-          accent-color: #0070f3;
+          accent-color: #667eea;
         }
         
         input[type='text'],
         select,
         textarea {
           width: 100%;
-          padding: 0.75rem;
-          border: 1px solid #ddd;
-          border-radius: 4px;
+          padding: 0.875rem 1rem;
+          border: 2px solid #e9ecef;
+          border-radius: 10px;
           font-size: 1rem;
+          transition: all 0.3s ease;
+          background: #fafbfc;
+        }
+        
+        input[type='text']:focus,
+        select:focus,
+        textarea:focus {
+          outline: none;
+          border-color: #667eea;
+          background: white;
+          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
         
         textarea {
-          min-height: 120px;
+          min-height: 140px;
           resize: vertical;
-          line-height: 1.5;
+          line-height: 1.6;
+          font-family: 'Courier New', monospace;
         }
         
         .field-hint {
-          margin-top: 0.5rem;
+          margin-top: 0.625rem;
           font-size: 0.875rem;
-          color: #666;
+          color: #6c757d;
+          line-height: 1.5;
+          padding: 0.5rem 0.75rem;
+          background: #f8f9fa;
+          border-radius: 6px;
+          border-left: 3px solid #667eea;
         }
         
         .generate-btn {
           width: 100%;
-          padding: 1rem;
-          background-color: #0070f3;
+          padding: 1.125rem;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
           color: white;
           border: none;
-          border-radius: 4px;
-          font-size: 1rem;
+          border-radius: 10px;
+          font-size: 1.05rem;
+          font-weight: 600;
           cursor: pointer;
-          transition: background-color 0.2s;
+          transition: all 0.3s ease;
+          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+          letter-spacing: 0.5px;
         }
         
         .generate-btn:hover {
-          background-color: #0056b3;
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+        }
+        
+        .generate-btn:active {
+          transform: translateY(0);
         }
       `}</style>
     </form>
