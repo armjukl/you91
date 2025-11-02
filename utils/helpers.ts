@@ -20,7 +20,7 @@ export const encodeBase64 = (str: string): string => {
 
 // 整理内容函数
 export const processContent = (content: string): ProcessedContent => {
-  const replaced = content.replace(/[|"'\\r\\n]+/g, ',').replace(/,+/g, ',');
+  const replaced = content.replace(/[|"'\\\r\n]+/g, ',').replace(/,+/g, ',');
   let cleaned = replaced;
   if (cleaned.charAt(0) === ',') cleaned = cleaned.slice(1);
   if (cleaned.charAt(cleaned.length - 1) === ',') cleaned = cleaned.slice(0, cleaned.length - 1);
