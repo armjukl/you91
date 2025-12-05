@@ -33,23 +33,13 @@ interface ExternalTopApiResponse {
   };
 }
 
-function formatEndpointHost(host: string): string {
-  const trimmed = host.trim();
-  if (!trimmed) {
-    return trimmed;
-  }
-  if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
-    return trimmed;
-  }
-  return trimmed.includes(':') ? `[${trimmed}]` : trimmed;
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   const externalApiUrl = 'https://vps789.com/openApi/cfIpTop20';
-  const defaultPort = 443; // 默认端口
+  const defaultPort = 443; // 默认端口，与上一个接口转换保持一致，因为原始数据中没有提供端口信息。
+                           // 如果需要2096等其他端口，需要有额外的逻辑来判
 
   try {
     // 1. 从外部API获取数据
@@ -61,29 +51,23 @@ export default async function handler(
     }
 
     const externalData: ExternalTopApiResponse = await response.json();
-    
     // 2. 转换数据格式
     const transformedLines: string[] = [];
 
     if (externalData && externalData.data && externalData.data.good) {
       const ipList = externalData.data.good;
-      
       if (Array.isArray(ipList)) {
         for (const item of ipList) {
           // 确保ip, label, avgScore 存在且类型正确
           if (item.ip && item.label && typeof item.avgScore === 'number') {
-            const formattedHost = formatEndpointHost(item.ip);
-            if (!formattedHost) {
-              continue;
-            }
             // 格式：[ip]:[port]#[label]-[avgScore]
-            transformedLines.push(`${formattedHost}:${defaultPort}#${item.label}-${item.avgScore}`);
+            transformedLines.push(`${item.ip}:${defaultPort}#${item.label}-${item.avgScore}`);
           }
         }
       }
     }
 
-    // 3. 将所有行用换行符连接起来
+      // 3. 将所有行用换行符连接起来
     const resultString = transformedLines.join('\n');
 
     // 4. 设置响应头为纯文本，并发送结果
