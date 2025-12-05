@@ -1,12 +1,15 @@
+export type SubscribeMode = 'standard' | 'template';
+
 export interface SubscribeRequest {
-  host: string;
-  uuid: string;
+  host?: string;
+  uuid?: string;
   path?: string;
   sni?: string;
-  type?: string;
-  format?: string;
-  mode?: string;
+  type?: 'ws' | 'tcp' | 'http';
+  format?: 'vless' | 'vmess';
+  mode?: SubscribeMode;
   extra?: string;
+  templateLink?: string;
 }
 
 export interface ProxyConfig {
