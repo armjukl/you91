@@ -117,7 +117,7 @@ export default function Home() {
       <style jsx>{`
         .page-wrapper {
           min-height: 100vh;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
           padding: 2rem 1rem;
           font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
         }
@@ -135,16 +135,15 @@ export default function Home() {
         
         h1 {
           font-size: 2.5rem;
-          font-weight: 700;
-          color: white;
+          font-weight: 600;
+          color: #2c3e50;
           margin-bottom: 0.75rem;
-          text-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
           letter-spacing: -0.5px;
         }
         
         .subtitle {
           font-size: 1.1rem;
-          color: rgba(255, 255, 255, 0.95);
+          color: #5a6c7d;
           font-weight: 400;
           margin: 0;
         }
@@ -152,9 +151,11 @@ export default function Home() {
         .result-section {
           margin-top: 2rem;
           padding: 2rem;
-          background: white;
-          border-radius: 16px;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+          background: rgba(255, 255, 255, 0.7);
+          border-radius: 20px;
+          box-shadow: 0 8px 32px rgba(31, 38, 135, 0.17);
+          backdrop-filter: blur(4px);
+          border: 1px solid rgba(255, 255, 255, 0.25);
           animation: fadeInUp 0.5s ease-out;
         }
         
@@ -176,38 +177,40 @@ export default function Home() {
         .input-group input {
           flex: 1;
           padding: 0.875rem 1rem;
-          border: 2px solid #e9ecef;
-          border-radius: 10px;
+          border: 1px solid rgba(200, 210, 220, 0.4);
+          border-radius: 12px;
           font-size: 0.95rem;
-          background: #fafbfc;
-          color: #495057;
+          background: rgba(255, 255, 255, 0.5);
+          color: #2c3e50;
           transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
         }
         
         .input-group input:focus {
           outline: none;
-          border-color: #667eea;
-          background: white;
-          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+          border-color: rgba(100, 150, 200, 0.6);
+          background: rgba(255, 255, 255, 0.8);
+          box-shadow: 0 0 0 3px rgba(100, 150, 200, 0.1);
         }
         
         .copy-btn {
           padding: 0.875rem 1.5rem;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: rgba(100, 150, 200, 0.7);
           color: white;
-          border: none;
-          border-radius: 10px;
+          border: 1px solid rgba(100, 150, 200, 0.5);
+          border-radius: 12px;
           cursor: pointer;
           font-weight: 600;
           font-size: 0.95rem;
           transition: all 0.3s ease;
-          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+          backdrop-filter: blur(10px);
           white-space: nowrap;
         }
         
         .copy-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+          background: rgba(100, 150, 200, 0.85);
+          box-shadow: 0 4px 15px rgba(100, 150, 200, 0.3);
         }
         
         .copy-btn:active {
@@ -217,21 +220,23 @@ export default function Home() {
         .qrcode-section {
           text-align: center;
           padding-top: 1.5rem;
-          border-top: 2px solid #f0f0f0;
+          border-top: 1px solid rgba(200, 210, 220, 0.2);
           animation: fadeIn 0.4s ease-out;
         }
         
         .qrcode-wrapper {
-          background: white;
+          background: rgba(255, 255, 255, 0.6);
           padding: 1.5rem;
           display: inline-block;
           border-radius: 16px;
-          box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+          box-shadow: 0 8px 32px rgba(31, 38, 135, 0.17);
+          border: 1px solid rgba(255, 255, 255, 0.25);
+          backdrop-filter: blur(4px);
           margin-bottom: 1rem;
         }
         
         .qrcode-hint {
-          color: #6c757d;
+          color: #5a6c7d;
           font-size: 0.95rem;
           margin: 1rem 0;
           font-weight: 500;
@@ -239,33 +244,36 @@ export default function Home() {
         
         .toggle-qr-btn {
           padding: 0.75rem 1.5rem;
-          background: #f8f9fa;
-          color: #495057;
-          border: 2px solid #e9ecef;
-          border-radius: 10px;
+          background: rgba(255, 255, 255, 0.5);
+          color: #2c3e50;
+          border: 1px solid rgba(200, 210, 220, 0.4);
+          border-radius: 12px;
           cursor: pointer;
           font-weight: 600;
           font-size: 0.9rem;
           transition: all 0.3s ease;
+          backdrop-filter: blur(10px);
         }
         
         .toggle-qr-btn:hover {
-          background: white;
-          border-color: #667eea;
-          color: #667eea;
+          background: rgba(255, 255, 255, 0.8);
+          border-color: rgba(100, 150, 200, 0.5);
+          color: #2c3e50;
           transform: translateY(-2px);
+          box-shadow: 0 4px 15px rgba(100, 150, 200, 0.2);
         }
         
         .toggle-qr-btn.show {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: rgba(100, 150, 200, 0.7);
           color: white;
-          border: none;
-          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+          border: 1px solid rgba(100, 150, 200, 0.5);
+          box-shadow: 0 4px 15px rgba(100, 150, 200, 0.2);
         }
         
         .toggle-qr-btn.show:hover {
           transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+          background: rgba(100, 150, 200, 0.85);
+          box-shadow: 0 6px 20px rgba(100, 150, 200, 0.3);
         }
         
         @keyframes fadeInDown {

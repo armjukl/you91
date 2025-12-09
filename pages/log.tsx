@@ -15,28 +15,100 @@ interface LogPageProps {
 
 export default function LogPage({ logs }: LogPageProps) {
   return (
-    <div style={{ padding: '2rem', fontFamily: 'monospace' }}>
-      <h1>订阅生成访问日志</h1>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ backgroundColor: '#f5f5f5' }}>
-            <th style={{ padding: '0.5rem', border: '1px solid #ddd' }}>时间戳</th>
-            <th style={{ padding: '0.5rem', border: '1px solid #ddd' }}>IP 地址</th>
-            <th style={{ padding: '0.5rem', border: '1px solid #ddd' }}>请求 URL</th>
-            <th style={{ padding: '0.5rem', border: '1px solid #ddd' }}>User Agent</th>
-          </tr>
-        </thead>
-        <tbody>
-          {logs.map((log, index) => (
-            <tr key={index}>
-              <td style={{ padding: '0.5rem', border: '1px solid #ddd' }}>{log.timestamp}</td>
-              <td style={{ padding: '0.5rem', border: '1px solid #ddd' }}>{log.ip}</td>
-              <td style={{ padding: '0.5rem', border: '1px solid #ddd' }}>{log.url}</td>
-              <td style={{ padding: '0.5rem', border: '1px solid #ddd', fontSize: '0.8rem' }}>{log.userAgent}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+      padding: '2rem',
+      fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+    }}>
+      <style>{`
+        .log-container {
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+        
+        .log-container h1 {
+          color: #2c3e50;
+          margin-bottom: 2rem;
+          font-size: 2rem;
+          font-weight: 600;
+          letter-spacing: -0.5px;
+        }
+        
+        .log-table-wrapper {
+          background: rgba(255, 255, 255, 0.7);
+          border-radius: 20px;
+          box-shadow: 0 8px 32px rgba(31, 38, 135, 0.17);
+          backdrop-filter: blur(4px);
+          border: 1px solid rgba(255, 255, 255, 0.25);
+          overflow: hidden;
+          padding: 1.5rem;
+        }
+        
+        .log-table-wrapper table {
+          width: 100%;
+          border-collapse: collapse;
+        }
+        
+        .log-table-wrapper thead tr {
+          background: rgba(100, 150, 200, 0.1);
+          border-bottom: 1px solid rgba(200, 210, 220, 0.3);
+        }
+        
+        .log-table-wrapper th {
+          padding: 1rem;
+          text-align: left;
+          font-weight: 600;
+          color: #2c3e50;
+          font-size: 0.95rem;
+          letter-spacing: 0.3px;
+        }
+        
+        .log-table-wrapper tbody tr {
+          border-bottom: 1px solid rgba(200, 210, 220, 0.2);
+          transition: background-color 0.3s ease;
+        }
+        
+        .log-table-wrapper tbody tr:hover {
+          background: rgba(100, 150, 200, 0.08);
+        }
+        
+        .log-table-wrapper td {
+          padding: 0.875rem 1rem;
+          color: #5a6c7d;
+          font-family: 'Courier New', monospace;
+          font-size: 0.9rem;
+        }
+        
+        .log-table-wrapper tbody tr:last-child {
+          border-bottom: none;
+        }
+      `}</style>
+      <div className="log-container">
+        <h1>📊 订阅生成访问日志</h1>
+        <div className="log-table-wrapper">
+          <table>
+            <thead>
+              <tr>
+                <th>时间戳</th>
+                <th>IP 地址</th>
+                <th>请求 URL</th>
+                <th>User Agent</th>
+              </tr>
+            </thead>
+            <tbody>
+              {logs.map((log, index) => (
+                <tr key={index}>
+                  <td>{log.timestamp}</td>
+                  <td>{log.ip}</td>
+                  <td>{log.url}</td>
+                  <td>{log.userAgent}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 }
