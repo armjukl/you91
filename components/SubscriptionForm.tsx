@@ -213,12 +213,12 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
 
       <style jsx>{`
         .subscription-form {
-          background: white;
+          background: rgba(255, 255, 255, 0.7);
           padding: 2.5rem;
-          border-radius: 16px;
-          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08);
-          backdrop-filter: blur(10px);
-          border: 1px solid rgba(255, 255, 255, 0.18);
+          border-radius: 20px;
+          box-shadow: 0 8px 32px rgba(31, 38, 135, 0.17);
+          backdrop-filter: blur(4px);
+          border: 1px solid rgba(255, 255, 255, 0.25);
         }
         
         .form-group {
@@ -238,8 +238,10 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
           display: flex;
           gap: 1rem;
           padding: 0.5rem;
-          background: #f8f9fa;
-          border-radius: 12px;
+          background: rgba(255, 255, 255, 0.4);
+          border-radius: 14px;
+          border: 1px solid rgba(200, 210, 220, 0.3);
+          backdrop-filter: blur(10px);
         }
         
         .mode-options label {
@@ -248,30 +250,32 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
           justify-content: center;
           gap: 0.5rem;
           padding: 0.625rem 1.25rem;
-          border-radius: 8px;
-          border: 2px solid transparent;
+          border-radius: 10px;
+          border: 1px solid transparent;
           cursor: pointer;
           transition: all 0.3s ease;
-          color: #6c757d;
+          color: #5a6c7d;
           font-weight: 500;
           flex: 1;
-          background: white;
+          background: rgba(255, 255, 255, 0.5);
         }
         
         .mode-options label:hover {
           transform: translateY(-2px);
-          box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+          background: rgba(255, 255, 255, 0.8);
+          box-shadow: 0 4px 12px rgba(100, 150, 200, 0.15);
         }
         
         .mode-options label.active {
           color: white;
-          border-color: #667eea;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+          border: 1px solid rgba(100, 150, 200, 0.5);
+          background: rgba(100, 150, 200, 0.7);
+          box-shadow: 0 4px 15px rgba(100, 150, 200, 0.25);
+          backdrop-filter: blur(10px);
         }
         
         .mode-options input {
-          accent-color: #667eea;
+          accent-color: rgba(100, 150, 200, 0.9);
         }
         
         input[type='text'],
@@ -279,20 +283,22 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
         textarea {
           width: 100%;
           padding: 0.875rem 1rem;
-          border: 2px solid #e9ecef;
-          border-radius: 10px;
+          border: 1px solid rgba(200, 210, 220, 0.4);
+          border-radius: 12px;
           font-size: 1rem;
           transition: all 0.3s ease;
-          background: #fafbfc;
+          background: rgba(255, 255, 255, 0.5);
+          color: #2c3e50;
+          backdrop-filter: blur(10px);
         }
         
         input[type='text']:focus,
         select:focus,
         textarea:focus {
           outline: none;
-          border-color: #667eea;
-          background: white;
-          box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+          border-color: rgba(100, 150, 200, 0.6);
+          background: rgba(255, 255, 255, 0.8);
+          box-shadow: 0 0 0 3px rgba(100, 150, 200, 0.1);
         }
         
         textarea {
@@ -305,32 +311,33 @@ export default function SubscriptionForm({ onSubmit }: SubscriptionFormProps) {
         .field-hint {
           margin-top: 0.625rem;
           font-size: 0.875rem;
-          color: #6c757d;
+          color: #5a6c7d;
           line-height: 1.5;
           padding: 0.5rem 0.75rem;
-          background: #f8f9fa;
-          border-radius: 6px;
-          border-left: 3px solid #667eea;
+          background: rgba(100, 150, 200, 0.1);
+          border-radius: 8px;
+          border-left: 3px solid rgba(100, 150, 200, 0.6);
         }
         
         .generate-btn {
           width: 100%;
           padding: 1.125rem;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: rgba(100, 150, 200, 0.7);
           color: white;
-          border: none;
-          border-radius: 10px;
+          border: 1px solid rgba(100, 150, 200, 0.5);
+          border-radius: 12px;
           font-size: 1.05rem;
           font-weight: 600;
           cursor: pointer;
           transition: all 0.3s ease;
-          box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+          backdrop-filter: blur(10px);
           letter-spacing: 0.5px;
         }
         
         .generate-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.5);
+          background: rgba(100, 150, 200, 0.85);
+          box-shadow: 0 6px 20px rgba(100, 150, 200, 0.3);
         }
         
         .generate-btn:active {
